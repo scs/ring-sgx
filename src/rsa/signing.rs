@@ -137,12 +137,12 @@ impl RsaKeyPair {
     ///
     /// [RFC 5958]:
     ///     https://tools.ietf.org/html/rfc5958
-    pub fn from_pkcs8(pkcs8: &[u8]) -> Result<Self, KeyRejected> {
+    pub fn from_pkcs8(pkcs8: untrusted::Input) -> Result<Self, KeyRejected> {
         const RSA_ENCRYPTION: &[u8] = include_bytes!("../data/alg-rsa-encryption.der");
         let (der, _) = pkcs8::unwrap_key_(
             untrusted::Input::from(&RSA_ENCRYPTION),
             pkcs8::Version::V1Only,
-            untrusted::Input::from(pkcs8),
+            pkcs8,
         )?;
         Self::from_der(der.as_slice_less_safe())
     }
